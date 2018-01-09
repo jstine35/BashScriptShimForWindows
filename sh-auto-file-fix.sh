@@ -13,7 +13,10 @@
 #
 
 SHOW_HELP=0
+ELEVATE=0
+FORCE_ASSOC=0
 shell_path=
+
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
@@ -23,6 +26,14 @@ case $key in
     --shell-path)
     shell_path="$2"
     shift 2 # past argument + value
+    ;;
+    --elevate)
+    ELEVATE=1
+    shift
+    ;;
+	--force-assoc)
+	FORCE_ASSOC=1
+    shift
     ;;
     --help)
     SHOW_HELP=1
@@ -35,10 +46,33 @@ case $key in
 esac
 done
 
+me=$(basename "$0")
+
+if [[ "$FORCE_ASSOC" -eq "0" ]]; then
+	if ! cmd //C assoc .sh | grep "sh_auto_file"; then
+		# this is actually a pretty special error since somehow the bash script is running without
+		# the aid of any association.
+		
+		>&2 echo 
+		>&2 echo "ERROR: Git for Windows is not installed or the installation is corrupted."
+		>&2 echo "  This error occurred because the association for the .sh filetype is not set"
+		>&2 echo "  or is set to some unexpected value. You may optionally force configuration"
+		>&2 echo "  of the .sh association with:"
+		>&2 echo ""
+		>&2 echo "    $ ${me} --force-assoc"
+		>&2 echo ""
+		>&2 echo "Probably, it won't work.  But might be worth the try!"
+		
+		echo "Press any key to close..."
+		read  -n 1
+		exit 1
+	fi
+fi
+
 if [[ -z "$shell_path" ]]; then
 
 	is_git_bash=$(cmd //c ftype sh_auto_file | grep "git-bash")
-	is_bash=$(cmd //c ftype sh_auto_file | grep "bash.exe")
+	is_bash=$(cmd //c ftype sh_auto_file | egrep '(\\|/)bash.exe')
 	
 	
 	if [[ -n "$is_bash" ]]; then
@@ -64,18 +98,20 @@ if [[ -z "$shell_path" ]]; then
 		# we're running in an sh shell, so 'where bash' should return the bash that we want
 		# assuming the bash.exe is smart enough to set up a correct path env var that favors
 		# itself over all the other myriad installs which might exist on any given system.
-		$bash_fullpath="$(where bash) | head -n1"
+		bash_fullpath="$(where bash | head -n1)"
 	fi
 
 	if [[ ! -f "$bash_fullpath" ]]; then
 		>&2 echo 
 		>&2 echo "ERROR: suitable bash.exe could not found."
-		>&2 echo "  Please make sure to (re-)install Git for Windows and select the option"
+		>&2 echo "  For best results  make sure to (re-)install Git for Windows and select the option"
 		>&2 echo "    > 'Use Git from the Windows Command Prompt' "
 		>&2 echo
 		>&2 echo "  Alternatively, manually specify a specific path on the command line:"
-		>&2 echo "    $ sh_auto_file.sh --shell-path [path-to-shell-exec]"
-		>&2 echo 
+		>&2 echo "    $ ${me} --shell-path [path-to-shell-exec]"
+		>&2 echo ""
+		echo "Press any key to close..."
+		read  -n 1
 		exit -1
 	fi
 	
@@ -83,10 +119,27 @@ if [[ -z "$shell_path" ]]; then
 fi
 
 if [[ -f "$bash_fullpath" ]]; then
+	if [[ "$FORCE_ASSOC" -eq "1" ]]; then
+		cmd //C assoc .sh=sh_auto_file
+	fi
+
 	# MSYS has a bad habit of mucking up the quotations when using 'cmd //C'.
 	# this little trick exports the command line as an env var, and then pastes it
 	# from the cmd.exe context -- safe from MSYS meddling.
-
+	echo "BASH.exe found @ ${bash_fullpath}"
 	export whut="sh_auto_file=\"${bash_fullpath}\" --login \"%L\" %*"
-	cmd //C ftype %whut% 
+	if [[ "$ELEVATE" -eq "1" ]]; then
+		sudo cmd //C ftype %whut% 
+	else
+	         cmd //C ftype %whut% 
+	fi
+	echo "Press any key to close..."
+	read  -n 1
+else
+	>&2 echo "ERROR: File not found: $bash_fullpath"
+	>&2 echo "  No changes to system settings made."
+	>&2 echo 
+	echo "Press any key to close..."
+	read  -n 1
+	exit -1
 fi
