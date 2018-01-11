@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <VersionHelpers.h>
 
 /*----------------------------------------------------------------------
  * Purpose:
@@ -37,7 +38,7 @@ typedef struct _COMMAND_LINE_ARGS
 INT Launch(
 	__in PCWSTR ApplicationName,
 	__in PCWSTR CommandLine,
-	__in BOOL Wait 
+	__in BOOL Wait
 	)
 {
 	SHELLEXECUTEINFO Shex;
@@ -52,8 +53,8 @@ INT Launch(
 	if ( ! ShellExecuteEx( &Shex ) )
 	{
 		DWORD Err = GetLastError();
-		fwprintf( 
-			stderr, 
+		fwprintf(
+			stderr,
 			L"%s could not be launched: %d\n",
 			ApplicationName,
 			Err );
@@ -61,7 +62,7 @@ INT Launch(
 	}
 
 	_ASSERTE( Shex.hProcess );
-		
+
 	if ( Wait )
 	{
 		WaitForSingleObject( Shex.hProcess, INFINITE );
@@ -71,7 +72,7 @@ INT Launch(
 }
 
 INT DispatchCommand(
-	__in PCOMMAND_LINE_ARGS Args 
+	__in PCOMMAND_LINE_ARGS Args
 	)
 {
 	WCHAR AppNameBuffer[ MAX_PATH ];
@@ -79,7 +80,7 @@ INT DispatchCommand(
 
 	if ( Args->ShowHelp )
 	{
-		wprintf( 
+		wprintf(
 			BANNER
 			L"Execute a process on the command line with elevated rights\n"
 			L"\n"
@@ -126,27 +127,22 @@ INT DispatchCommand(
 }
 
 int __cdecl wmain(
-	__in int Argc, 
+	__in int Argc,
 	__in WCHAR* Argv[]
 	)
 {
-	OSVERSIONINFO OsVer;
 	COMMAND_LINE_ARGS Args;
 	INT Index;
 	BOOL FlagsRead = FALSE;
 	WCHAR CommandLineBuffer[ 260 ] = { 0 };
 
-	ZeroMemory( &OsVer, sizeof( OSVERSIONINFO ) );
-	OsVer.dwOSVersionInfoSize = sizeof( OSVERSIONINFO );
-	
 	ZeroMemory( &Args, sizeof( COMMAND_LINE_ARGS ) );
 	Args.CommandLine = CommandLineBuffer;
 
 	//
 	// Check OS version
 	//
-	if ( GetVersionEx( &OsVer ) &&
-		OsVer.dwMajorVersion < 6 )
+	if (!IsWindowsVistaOrGreater())
 	{
 		fwprintf( stderr, L"This tool is for Windows Vista and above only.\n" );
 		return EXIT_FAILURE;
@@ -157,7 +153,7 @@ int __cdecl wmain(
 	//
 	for ( Index = 1; Index < Argc; Index++ )
 	{
-		if ( ! FlagsRead && 
+		if ( ! FlagsRead &&
 			 ( Argv[ Index ][ 0 ] == L'-' || Argv[ Index ][ 0 ] == L'/' ) )
 		{
 			PCWSTR FlagName = &Argv[ Index ][ 1 ];
@@ -205,7 +201,7 @@ int __cdecl wmain(
 	}
 
 #ifdef _DEBUG
-	wprintf( 
+	wprintf(
 		L"ShowHelp:        %s\n"
 		L"Wait:            %s\n"
 		L"StartComspec:    %s\n"
@@ -226,7 +222,7 @@ int __cdecl wmain(
 		Args.ShowHelp = TRUE;
 	}
 
-	if ( ! Args.ShowHelp && 
+	if ( ! Args.ShowHelp &&
 		 ( (   Args.StartComspec && 0 == wcslen( Args.CommandLine ) ) ||
 		   ( ! Args.StartComspec && Args.ApplicationName == NULL ) ) )
 	{
