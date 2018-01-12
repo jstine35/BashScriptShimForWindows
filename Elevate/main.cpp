@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include <VersionHelpers.h>
+#include <Shlwapi.h>
+#include <Pathcch.h>
 
 /*----------------------------------------------------------------------
  * Purpose:
@@ -89,6 +91,8 @@ INT DispatchCommand(
 			L"-wait - Waits until program terminates\n"
 			L"-k    - Starts the the %%COMSPEC%% environment variable value and\n"
 			L"        executes program in it (CMD.EXE, 4NT.EXE, etc.)\n"
+			L"-k    - Starts the the %%COMSPEC%% environment variable value and\n"
+			L"        executes program in it (CMD.EXE, 4NT.EXE, etc.)\n"
 			L"prog  - The program to execute\n"
 			L"args  - Optional command line arguments to program\n" );
 
@@ -120,6 +124,29 @@ INT DispatchCommand(
 			return EXIT_FAILURE;
 		}
 		Args->CommandLine = CmdLineBuffer;
+	}
+	else
+	{
+		size_t len = wcslen(Args->ApplicationName);
+		if (len > MAX_PATH) {
+			len = MAX_PATH;
+		}
+
+		WCHAR** extpos = NULL;
+		PathCchFindExtension(Args->ApplicationName, len+1, extpos);
+		if (extpos && extpos[0] == '.') {
+			TCHAR szBuf[1000];
+			DWORD cbBufSize = _countof(szBuf);
+			HRESULT hr = AssocQueryString(0, ASSOCSTR_FRIENDLYAPPNAME, *extpos, NULL, szBuf, &cbBufSize);
+			if (FAILED(hr)) { /* handle error */ }
+
+			std::string strFriendlyProgramName(szBuf, cbBufSize);
+
+			cbBufSize = sizeof(szBuf);
+			hr = AssocQueryString(0, ASSOCSTR_EXECUTABLE, *extpos, NULL, szBuf, &cbBufSize);
+			if (FAILED(hr)) { /* handle error */ }
+			CStringA strExe(szBuf, cbBufSize);
+		}
 	}
 
 	//wprintf( L"App: %s,\nCmd: %s\n", Args->ApplicationName, Args->CommandLine );
