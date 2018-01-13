@@ -88,7 +88,7 @@ INT DispatchCommand(
 			L"-?    - Shows this help\n"
 			L"-wait - Waits until program terminates\n"
 			L"-k    - Starts the the %%COMSPEC%% environment variable value and\n"
-			L"		executes program in it (CMD.EXE, 4NT.EXE, etc.)\n"
+			L"        executes program in it (CMD.EXE, 4NT.EXE, etc.)\n"
 			L"prog  - The program to execute\n"
 			L"args  - Optional command line arguments to program\n" );
 
