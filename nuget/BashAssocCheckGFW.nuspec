@@ -7,10 +7,10 @@
     <owners>Jake Stine</owners>
     <projectUrl>https://github.com/jstine35/BashPipeFixGFW</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Fixes a bug in Git for Windows .sh filetype - subsequently allowing embedding .sh scripts into batch files and build events.</description>
+    <description>Fixes a bug in Git for Windows .sh filetype and allows embedding .sh scripts into batch files and build events.</description>
     <releaseNotes>Initial package release.</releaseNotes>
     <copyright>Copyright 2018</copyright>
-    <tags>Git SH Bash</tags>
+    <tags>Git SH Bash Assoc</tags>
 
     <!--
 	<dependencies>
@@ -19,10 +19,10 @@
 	-->
   </metadata>
   <files>
-    <file src="Elevate\bin\x64\Release\Elevate.exe" target="bin" />
-    <file src="sh_auto_file_fix.sh"                 target="bin" />
-    <file src="sh_assoc_check.sh"                   target="bin" />
-    <file src="sh-assoc-check.cmd"                  target="bin" />
-    <file src="BashAssocCheck.targets"              target="build" />
+    <file src="$eudodir$eudo.exe"                   target="bin" />
+    <file src="..\sh_auto_file_fix.sh"              target="bin" />
+    <file src="..\sh_assoc_check.sh"                target="bin" />
+    <file src="sh-assoc-fix.cmd"                    target="bin" />
+    <file src="BashAssocCheckGFW.targets"           target="build" />
   </files>
 </package>
