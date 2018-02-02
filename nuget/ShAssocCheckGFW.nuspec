@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ShAssocCheckGFW</id>
+    <version>0.0.1</version>
+    <authors>Jake Stine</authors>
+    <owners>Jake Stine</owners>
+    <projectUrl>https://github.com/jstine35/BashAssocFixGFW</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Fixes a bug in Git for Windows .sh file association and allows embedding .sh scripts into batch files and build events.</description>
+    <releaseNotes>Initial package release.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>Git SH Bash Assoc</tags>
+
+    <!--
+	<dependencies>
+      <dependency id="SampleDependency" version="1.0" />
+    </dependencies>
+	-->
+  </metadata>
+    
+  <!-- the NSIS installer must be built prior to creating the NuGet package. The batch
+	   scripts are not baked into NuGet directly because there's no means by which we can
+	   run the script from MSBuild with elevated user privileges. But the NSIS script has
+	   elevation baked into it's .exe manifest, and so _it_ can extract the batch files and
+	   run them just-fine.
+  -->
+  
+  <files>
+    <file src="..\nsis\ShAssocFixGitForWindows.exe" target="bin" />
+    <file src="sh-assoc-check.cmd"                  target="bin" />
+    <file src="ShAssocCheckGFW.targets"             target="build" />
+  </files>
+</package>
