@@ -10,9 +10,10 @@ IF NOT EXIST "%BINDIR%\sh_assoc_check.sh"      goto :ERROR_CORRUPT
 IF NOT EXIST "%BINDIR%\sh_auto_file_fix.sh"    goto :ERROR_CORRUPT
 
 "%BINDIR%\sh_assoc_check.sh" > nul 2>&1 || (
-	echo ERROR: SH script support check failed! 2>&1
-	echo   CoreUtils/BASH is required to build this software.  2>&1
-	echo   This error can be remedied by installing Git for Windows or MSYS/MinGW. 2>&1
+	>&2 echo ERROR: SH script support check failed!
+	>&2 echo This fix requires Git for Windows.  If you do have Git for Windows installed then the
+	>&2 echo install appears to be corrupted.  Please re-install latest edition of Git for Windows
+	>&2 echo and try again.
 	exit /b 1
 )
 
@@ -24,6 +25,8 @@ ftype sh_auto_file>nul 2>&1 || (
 
 
 :: check if the sh_auto_file is already up to date and shortcut out if so.
+:: The offending program that Git for Windows associates with is git-bash.exe,
+:: so anything else we're going to consider valid.
 
 FOR /F "tokens=* USEBACKQ" %%F IN (`ftype sh_auto_file`) DO (
 	SET var=%%F
@@ -31,12 +34,12 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`ftype sh_auto_file`) DO (
 
 call :GETFILE %var:~13%
 
-IF "%gfresult%" == "bash.exe" (
-	::echo Everything looks up-to-date, no system changes made.
-	::exit /B 0
+IF "%gfresult%" == "git-bash.exe" (
+	:: It's expected that NSIS elevated to admin rights to allow this script to modify all
+	:: the important things.
+	"%BINDIR%\sh_auto_file_fix.sh"
 )
 
-"%BINDIR%\elevate.exe" "%BINDIR%\sh_auto_file_fix.sh"
 exit /B 0
 
 
