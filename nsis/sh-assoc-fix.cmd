@@ -33,11 +33,11 @@ ftype sh_auto_file>nul 2>&1 || (
     >&2 echo ERROR: CoreUtils/Bash pipe redirection test FAILED.
     >&2 echo ERROR: Git for Windows association 'sh_auto_file' not found!
     
-    >&2 echo This is an unrecognized version of CoreUtils/Bash and things aren't
-    >&2 echo working right but this installer is also not confident enough to apply
-    >&2 echo changes since it doesn't recognize your software setup.  Please visit
-    >&2 echo the ShAssocFix website on GitHub for details on how you can investigate
-    >&2 echo your setup and fix things manually.
+    >&2 echo This is an unrecognized version of CoreUtils/Bash.  Unforunately pipe
+    >&2 echo redirection is not working right but this installer is also not confident 
+    >&2 echo enough to apply changes since it doesn't recognize your software setup. 
+    >&2 echo Please visit the ShAssocFix website on GitHub for details on how you can
+    >&2 echo investigate your setup and fix things manually.
     >&2 echo
     >&2 No changes to the system will be made.
     exit /b 1
