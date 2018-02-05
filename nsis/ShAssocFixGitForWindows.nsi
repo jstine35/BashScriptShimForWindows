@@ -31,3 +31,6 @@ Section
 	${EndIf}
   
 SectionEnd
+
+; For uninstalling purposes, the original sh_auto_file looks like this:
+;  sh_auto_file="C:\Program Files\Git\git-bash.exe" --no-cd "%L" %*

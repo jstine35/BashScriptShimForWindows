@@ -11,13 +11,20 @@
 set BINDIR=%~1
 IF "%BINDIR%" == ""  set BINDIR=.
 
-IF NOT EXIST %BINDIR%\ShAssocFixGitForWindows.exe"      goto :ERROR_CORRUPT
+IF NOT EXIST "%BINDIR%\sh_assoc_check.sh"      goto :ERROR_CORRUPT
 
-:: These are the dependencies baked into the NSIS installer:
-:: IF NOT EXIST "%BINDIR%\sh_assoc_check.sh"      goto :ERROR_CORRUPT
-:: IF NOT EXIST "%BINDIR%\sh_auto_file_fix.sh"    goto :ERROR_CORRUPT
+:: if the user has CoreUtils in their path then `find` is going to be the Unix one, which is
+:: very different from the grep-like `find` in CoreUtils.  Workaround by checking for grep and
+:: favoring that, and assuming `find` is the Windows-one if grep is missing.
+grep --version >nul 2>&1 && (set grep_cmd=grep) || (set grep_cmd=find)
 
-"%BINDIR%\sh_assoc_check.sh" > nul 2>&1 || (
+"%BINDIR%\sh_assoc_check.sh" | %grep_cmd% 'VERIFIED' > nul 2>&1 && (
+	:: full pipe redirection check passed, so there's nothing else we need to do.
+	exit /b 0
+)
+
+:: 9009 is the code for "file not found", which gets set if sh_assoc_check.sh has no valid association 
+IF %ERRORLEVEL% == 9009 (
 	>&2 echo ERROR: Bash/CoreUtils is required to build this software. 
 	>&2 echo You can acquire CoreUtils by installing one of the following software packages:
 	>&2 echo   * Git For Windows  [recommended]
@@ -29,14 +36,28 @@ IF NOT EXIST %BINDIR%\ShAssocFixGitForWindows.exe"      goto :ERROR_CORRUPT
 	exit /b 1
 )
 
+:: At this point we've confirmed association is present and the pipe isn't working.
+:: It should be Git for Windows, which means it should be sh_auto_file defined.
+
 ftype sh_auto_file>nul 2>&1 || (
-	:: sh_auto_file not found, but the .sh association check above passed.  Assume that
-	:: bash/CoreUtils is running by some means other than Git for Windows, and that it's
-	:: not having the git-for-windows behavioral problem.  Moving right along...
-	::echo No fixup patching is required...
-	exit /b 0
+	>&2 echo ERROR: CoreUtils/Bash pipe redirection test FAILED.
+	>&2 echo ERROR: Unrecognized version of CoreUtils/Bash -- manual fix will be required.
+	>&2 echo 
+	>&2 echo You can acquire a supported version of CoreUtils by installing one of the following
+	>&2 echo software packages:
+	>&2 echo   * Git For Windows  [recommended]
+	>&2 echo   * MinGW / MSYS
+	>&2 echo 
+	>&2 echo Note that Cygwin is *not* supported: it does not provide .sh file associations by
+	>&2 echo default, and it lacks automatic windows/linux pathname conversion features of
+	>&2 echo MinGW / MSYS.
+	
+	exit /b 1
 )
 
+IF NOT EXIST %BINDIR%\ShAssocFixGitForWindows.exe"      goto :ERROR_CORRUPT
+:: These are the dependencies baked into the NSIS installer:
+:: IF NOT EXIST "%BINDIR%\sh_auto_file_fix.sh"    goto :ERROR_CORRUPT
 
 :: check if the sh_auto_file is already up to date and shortcut out if so.
 :: The offending program that Git for Windows associates with is git-bash.exe,

@@ -11,10 +11,15 @@
 #   1. don't use git-bash, or
 #   2. don't use sh_auto_file association for .sh scripts.
 #
+#
+# Note for future uninstalling purposes:
+#  Original sh_auto_file set by GitWin looks like this:
+#  sh_auto_file="C:\Program Files\Git\git-bash.exe" --no-cd "%L" %*
 
 SHOW_HELP=0
 ELEVATE=0
 FORCE_ASSOC=0
+INTERACTIVE=1
 shell_path=
 
 
@@ -33,6 +38,10 @@ case $key in
     ;;
 	--force-assoc)
 	FORCE_ASSOC=1
+    shift
+    ;;
+	--noninteractive)
+	INTERACTIVE=0
     shift
     ;;
     --help)
@@ -63,8 +72,10 @@ if [[ "$FORCE_ASSOC" -eq "0" ]]; then
 		>&2 echo ""
 		>&2 echo "Probably, it won't work.  But might be worth the try!"
 		
-		echo "Press any key to close..."
-		read  -n 1
+		if [[ "$INTERACTIVE" -eq "1" ]]; then
+			echo "Press any key to close..."
+			read  -n 1
+		fi
 		exit 1
 	fi
 fi
@@ -110,9 +121,11 @@ if [[ -z "$shell_path" ]]; then
 		>&2 echo "  Alternatively, manually specify a specific path on the command line:"
 		>&2 echo "    $ ${me} --shell-path [path-to-shell-exec]"
 		>&2 echo ""
-		echo "Press any key to close..."
-		read  -n 1
-		exit -1
+		if [[ "$INTERACTIVE" -eq "1" ]]; then
+			echo "Press any key to close..."
+			read  -n 1
+		fi
+		exit 1
 	fi
 	
 	shell_path="$bash_fullpath"
@@ -133,13 +146,17 @@ if [[ -f "$bash_fullpath" ]]; then
 	else
 	         cmd //C ftype %whut% 
 	fi
-	echo "Press any key to close..."
-	read  -n 1
+	if [[ "$INTERACTIVE" -eq "1" ]]; then
+		echo "Press any key to close..."
+		read  -n 1
+	fi
 else
 	>&2 echo "ERROR: File not found: $bash_fullpath"
 	>&2 echo "  No changes to system settings made."
 	>&2 echo 
-	echo "Press any key to close..."
-	read  -n 1
-	exit -1
+	if [[ "$INTERACTIVE" -eq "1" ]]; then
+		echo "Press any key to close..."
+		read  -n 1
+	fi
+	exit 1
 fi
