@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>ShAssocCheckGFW</id>
-    <version>0.0.1</version>
+    <id>ShAssocCheck</id>
+    <version>0.0.2</version>
     <authors>Jake Stine</authors>
     <owners>Jake Stine</owners>
     <projectUrl>https://github.com/jstine35/BashAssocFixGFW</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Fixes a bug in Git for Windows .sh file association and allows embedding .sh scripts into batch files and build events.</description>
+    <description>Verifies correct operation of .sh file association and automatically fixes known bug in Git for Windows .sh association, if detected.</description>
     <releaseNotes>Initial package release.</releaseNotes>
     <copyright>Copyright 2018</copyright>
-    <tags>Git SH Bash Assoc</tags>
+    <tags>Git SH Bash Assoc Association</tags>
 
     <!--
 	<dependencies>
@@ -29,11 +29,11 @@
   <files>
     <file src="..\nsis\ShAssocFixGitForWindows.exe" target="bin" />
     <file src="sh-assoc-check.cmd"                  target="bin" />
-    <file src="ShAssocCheckGFW.targets"             target="build" />
+    <file src="ShAssocCheck.targets"                target="build" />
+    <file src="..\sh_assoc_check.sh"                target="bin" />
 
 <!-- Following files are what's included in the NSIS installer. -->
 <!-- 
-    <file src="..\sh_assoc_check.sh"                target="bin" />
     <file src="..\sh_auto_file_fix.sh"              target="bin" />
 -->
 

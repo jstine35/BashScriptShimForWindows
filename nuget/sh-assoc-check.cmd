@@ -1,4 +1,5 @@
 @echo off
+setlocal
 
 :: This script is run from the context of an MSBuild job.  This means that it will almost
 :: certainly require admin rights elevation in order to modify associations.  In order to
