@@ -1,10 +1,13 @@
 # ShAssocCheck
 Performs checks for `.sh` file association and correct pipe redirection behavior and reports a coherent
-error message if the check fails.  Supports **Git for Windows**, **MSYS**, **MinGW**, and maybe **CygWin**.
-Detects known problems with certan installs and fixes them _(requires user admin rights elevation)_.
+error message if the check fails.  Supports [**Git for Windows**](https://gitforwindows.org/) and
+[**MSYS2**](http://www.msys2.org/).  It will also detect a known problem with _Git for Windows_ and fix it
+_(requires user admin rights elevation)_.
 
 Available in multiple form factors:
-  * as an installer for individual users looking to verify their CoreUtils is working as-it-should
+  * ___(recommended)___ as an [installer for individual users](https://github.com/jstine35/ShAssocCheck/releases)
+    looking to verify their CoreUtils is working as-it-should, or to fix their existing _Git for Windows_
+    install.
   * as a NuGet package that can be attached to any project and throws helpful diagnostic messages if
     CoreUtils checks fail.
   * as stand-alone `.sh` scripts which must be run from an _admin-enabled_ `git-bash` shell -- for those
@@ -14,11 +17,11 @@ Available in multiple form factors:
 
 [TODO - link to nuget published page]
 
-Feel free to add this dependency to all your projects, if you would like your projects to be robust against
-developers encountering mysterious build failures due to pipe redirection failures.  Keep in mind that this
-NuGet package doesn't _do_ anything, except verify that `.sh` scripts are in fact working.  If you have a
-controlled development envitonment where you can ensure everyone has Bash/CoreUtils properly installed, then
-there's really no need to use the `ShAssocCheck` NuGet Package.
+If you would like your Visual Studio projects to be robust against developers encountering mysterious build
+failures due to pipe redirection failures or missing `.sh` file associations, then add this NuGet dependency.
+Keep in mind that this NuGet package normally doesn't _do_ anything, except verify that `.sh` scripts are in
+fact working.  If you have a controlled development envitonment where you can ensure everyone has Bash/CoreUtils
+properly installed, then there's really no need to use the `ShAssocCheck` NuGet Package.
 
 If you have a solution with many projects then it is a good idea to attach `ShAssocCheck` NuGet package to a
 special startup project in your solution that runs before anything else.  Often times solutions will have such
@@ -34,6 +37,11 @@ script proceeds to check `sh_auto_file` and see if it matches git-bash.exe.  If 
 the _Admin Elevated Rights_ profile required to modify file types and associations, and will be invoked
 only once after any *Git for Windows* install/update (due to GitWin overwritting our association with it's
 broken one).
+
+---------------------
+## Addendum: Trivia!
+Probably this section's not helpful, unless you're academically curioous or your system is in some
+bad or broken state and you're trying to troubleshoot it.
 
 ### Git for Windows Bug in Detail
 The default mode of operation when Git for Windows is installed is to run a new terminal window for
