@@ -1,19 +1,39 @@
 # ShAssocCheck
 Performs checks for `.sh` file association and correct pipe redirection behavior and reports a coherent
-error message if the check fails.  Supports Git for Windows and stand-alone MSys / MinGW.  For users
-running Git for Windows, a system-wide fix is applied which enables pipe redirection and restore standard
-behavior that MSYS / MinGW adhere to.
+error message if the check fails.  Supports **Git for Windows**, **MSYS**, **MinGW**, and maybe **CygWin**.
+Detects known problems with certan installs and fixes them _(requires user admin rights elevation)_.
 
-Available as an installer for individual users, and as a NuGet package to be attached to Visual
-Studio projects.
+Available in multiple form factors:
+  * as an installer for individual users looking to verify their CoreUtils is working as-it-should
+  * as a NuGet package that can be attached to any project and throws helpful diagnostic messages if
+    CoreUtils checks fail.
+  * as stand-alone `.sh` scripts which must be run from an _admin-enabled_ `git-bash` shell -- for those
+    who love their CLI as much as I do
+    
+## Getting anf Using the NuGet Package
+
+[TODO - link to nuget published page]
+
+Feel free to add this dependency to all your projects, if you would like your projects to be robust against
+developers encountering mysterious build failures due to pipe redirection failures.  Keep in mind that this
+NuGet package doesn't _do_ anything, except verify that `.sh` scripts are in fact working.  If you have a
+controlled development envitonment where you can ensure everyone has Bash/CoreUtils properly installed, then
+there's really no need to use the `ShAssocCheck` NuGet Package.
+
+If you have a solution with many projects then it is a good idea to attach `ShAssocCheck` NuGet package to a
+special startup project in your solution that runs before anything else.  Often times solutions will have such
+a project for the purpose of collecting git repository version information and this NuGet package is best
+added as a dependency there.  If the solution doesn't have such a project, then probably it probably _should_
+have one.
 
 ## NuGet Package: How it Works
-The script tests for operational `.sh` file associations by runnign a simple `.sh` script and getting
-the result via stdout pipe.  If it works, then the script does nothing else.  If that check fails, the
+The script tests for operational `.sh` file associations by running a short `.sh` script and getting
+the result via pipe redirection.  If it works, then the script does nothing else.  If that check fails, the
 script proceeds to check `sh_auto_file` and see if it matches git-bash.exe.  If so, it applies the 
-Git for Windows assocation fix via a NSIS installer.  The installer provides the _Admin Elevated Rights_
-profile required to modify file types and associations, and will be invoked only once after any 
-Git for Windows install/update (due to GitWin overwritting our association with it's broken one).
+***Git for Windows* assocation fix** via a NSIS installer.  The installer is used because it provides
+the _Admin Elevated Rights_ profile required to modify file types and associations, and will be invoked
+only once after any *Git for Windows* install/update (due to GitWin overwritting our association with it's
+broken one).
 
 ### Git for Windows Bug in Detail
 The default mode of operation when Git for Windows is installed is to run a new terminal window for
