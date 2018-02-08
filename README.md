@@ -10,7 +10,7 @@ Available in multiple form factors:
   * as stand-alone `.sh` scripts which must be run from an _admin-enabled_ `git-bash` shell -- for those
     who love their CLI as much as I do
     
-## Getting anf Using the NuGet Package
+## Getting and Using the NuGet Package
 
 [TODO - link to nuget published page]
 
