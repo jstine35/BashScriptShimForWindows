@@ -36,11 +36,11 @@ IF %ERRORLEVEL% == 9009 (
     >&2 echo ERROR: Bash/CoreUtils is required to build this software. 
     >&2 echo You can acquire CoreUtils by installing one of the following software packages:
     >&2 echo   * Git For Windows  [recommended]
-    >&2 echo   * MinGW / MSYS
+    >&2 echo   * MSYS2
     >&2 echo 
     >&2 echo Note that Cygwin is *not* supported: it does not provide .sh file associations
     >&2 echo by default, and it lacks automatic windows/linux pathname conversion features of
-    >&2 echo of MinGW / MSYS.
+    >&2 echo of MSYS2.
     exit /b 1
 )
 
@@ -54,11 +54,11 @@ ftype sh_auto_file>nul 2>&1 || (
     >&2 echo You can acquire a supported version of CoreUtils by installing one of the following
     >&2 echo software packages:
     >&2 echo   * Git For Windows  [recommended]
-    >&2 echo   * MinGW / MSYS
+    >&2 echo   * MSYS2
     >&2 echo 
     >&2 echo Note that Cygwin is *not* supported: it does not provide .sh file associations by
     >&2 echo default, and it lacks automatic windows/linux pathname conversion features of
-    >&2 echo MinGW / MSYS.
+    >&2 echo MSYS2.
     
     exit /b 1
 )
