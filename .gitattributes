@@ -1,0 +1,39 @@
+
+###############################################################################
+# Set default behavior to automatically normalize line endings.
+###############################################################################
+* text=auto
+*.sh text eol=lf
+
+###############################################################################
+# Git TabSpace Filter Rules
+###############################################################################
+# following are edited as either tabs or spaces depending on user filter config.
+# tabsize is also depending on user filter config.
+
+*.c           filter=tabspace
+*.cpp         filter=tabspace
+*.cs          filter=tabspace
+*.h           filter=tabspace
+*.hpp         filter=tabspace
+*.inl         filter=tabspace
+*.sh          filter=tabspace
+*.lua         filter=tabspace
+*.bat         filter=tabspace
+*.cmd         filter=tabspace
+*.md          filter=tabspace
+*.txt         filter=tabspace
+
+# xml and html are almost always tabsize 2.
+*.xml         filter=tabspace2
+*.html        filter=tabspace2
+*.nis         filter=tabspace2
+
+# python is iffy.  Not sure if it should be spaceonly or tabspace. 
+*.py          filter=spaceonly
+
+# following types should always be edited as spaces, because of other IDE/toolchain dependencies.
+
+*.csproj      filter=spaceonly
+*.props       filter=spaceonly
+*.vcxproj     filter=spaceonly
