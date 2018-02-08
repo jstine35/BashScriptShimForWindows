@@ -21,9 +21,11 @@ IF NOT EXIST "%BINDIR%\sh_assoc_check.sh"      goto :ERROR_CORRUPT
 :: if the user has CoreUtils in their path then `find` is going to be the Unix one, which is
 :: very different from the grep-like `find` in CoreUtils.  Workaround by checking for grep and
 :: favoring that, and assuming `find` is the Windows-one if grep is missing.
-grep --version >nul 2>&1 && (set grep_cmd=grep) || (set grep_cmd=find)
+::
+:: UPDATE: use CMD's FINDSTR builtin instead of find or grep!
+::grep --version >nul 2>&1 && (set grep_cmd=grep) || (set grep_cmd=find)
 
-"%BINDIR%\sh_assoc_check.sh" | %grep_cmd% 'VERIFIED' > nul 2>&1 && (
+"%BINDIR%\sh_assoc_check.sh" | FINDSTR "VERIFIED" > nul 2>&1 && (
     :: full pipe redirection check passed, so there's nothing else we need to do.
     exit /b 0
 )
