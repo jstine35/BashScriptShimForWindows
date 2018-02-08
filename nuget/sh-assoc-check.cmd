@@ -24,40 +24,40 @@ IF NOT EXIST "%BINDIR%\sh_assoc_check.sh"      goto :ERROR_CORRUPT
 grep --version >nul 2>&1 && (set grep_cmd=grep) || (set grep_cmd=find)
 
 "%BINDIR%\sh_assoc_check.sh" | %grep_cmd% 'VERIFIED' > nul 2>&1 && (
-	:: full pipe redirection check passed, so there's nothing else we need to do.
-	exit /b 0
+    :: full pipe redirection check passed, so there's nothing else we need to do.
+    exit /b 0
 )
 
 :: 9009 is the code for "file not found", which gets set if sh_assoc_check.sh has no valid association 
 IF %ERRORLEVEL% == 9009 (
-	>&2 echo ERROR: Bash/CoreUtils is required to build this software. 
-	>&2 echo You can acquire CoreUtils by installing one of the following software packages:
-	>&2 echo   * Git For Windows  [recommended]
-	>&2 echo   * MinGW / MSYS
-	>&2 echo 
-	>&2 echo Note that Cygwin is *not* supported: it does not provide .sh file associations
-	>&2 echo by default, and it lacks automatic windows/linux pathname conversion features of
-	>&2 echo of MinGW / MSYS.
-	exit /b 1
+    >&2 echo ERROR: Bash/CoreUtils is required to build this software. 
+    >&2 echo You can acquire CoreUtils by installing one of the following software packages:
+    >&2 echo   * Git For Windows  [recommended]
+    >&2 echo   * MinGW / MSYS
+    >&2 echo 
+    >&2 echo Note that Cygwin is *not* supported: it does not provide .sh file associations
+    >&2 echo by default, and it lacks automatic windows/linux pathname conversion features of
+    >&2 echo of MinGW / MSYS.
+    exit /b 1
 )
 
 :: At this point we've confirmed association is present and the pipe isn't working.
 :: It should be Git for Windows, which means it should be sh_auto_file defined.
 
 ftype sh_auto_file>nul 2>&1 || (
-	>&2 echo ERROR: CoreUtils/Bash pipe redirection test FAILED.
-	>&2 echo ERROR: Unrecognized version of CoreUtils/Bash -- manual fix will be required.
-	>&2 echo 
-	>&2 echo You can acquire a supported version of CoreUtils by installing one of the following
-	>&2 echo software packages:
-	>&2 echo   * Git For Windows  [recommended]
-	>&2 echo   * MinGW / MSYS
-	>&2 echo 
-	>&2 echo Note that Cygwin is *not* supported: it does not provide .sh file associations by
-	>&2 echo default, and it lacks automatic windows/linux pathname conversion features of
-	>&2 echo MinGW / MSYS.
-	
-	exit /b 1
+    >&2 echo ERROR: CoreUtils/Bash pipe redirection test FAILED.
+    >&2 echo ERROR: Unrecognized version of CoreUtils/Bash -- manual fix will be required.
+    >&2 echo 
+    >&2 echo You can acquire a supported version of CoreUtils by installing one of the following
+    >&2 echo software packages:
+    >&2 echo   * Git For Windows  [recommended]
+    >&2 echo   * MinGW / MSYS
+    >&2 echo 
+    >&2 echo Note that Cygwin is *not* supported: it does not provide .sh file associations by
+    >&2 echo default, and it lacks automatic windows/linux pathname conversion features of
+    >&2 echo MinGW / MSYS.
+    
+    exit /b 1
 )
 
 IF NOT EXIST %BINDIR%\ShAssocFixGitForWindows.exe"      goto :ERROR_CORRUPT
@@ -69,7 +69,7 @@ IF NOT EXIST %BINDIR%\ShAssocFixGitForWindows.exe"      goto :ERROR_CORRUPT
 :: so anything else we're going to consider valid.
 
 FOR /F "tokens=* USEBACKQ" %%F IN (`ftype sh_auto_file`) DO (
-	SET var=%%F
+    SET var=%%F
 )
 
 call :GETFILE %var:~13%
@@ -78,11 +78,11 @@ call :GETFILE %var:~13%
 :: All the shortcuts above ensure this only happens if it's *actually going to change something*.
 
 IF "%gfresult%" == "git-bash.exe" (
-	if %INTERACTIVE% == "true" (
-		"%BINDIR%\ShAssocFixGitForWindows.exe"
-	) else (
-	
-	)
+    if %INTERACTIVE% == "true" (
+        "%BINDIR%\ShAssocFixGitForWindows.exe"
+    ) else (
+    
+    )
 )
 
 exit /B 0
