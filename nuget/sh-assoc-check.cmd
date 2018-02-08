@@ -10,7 +10,11 @@ setlocal
 :: there's no appropriate sh handler installed into the system.
 
 set BINDIR=%~1
+set INTERACTIVE=%2
 IF "%BINDIR%" == ""  set BINDIR=.
+
+
+echo Interactive = %INTERACTIVE%
 
 IF NOT EXIST "%BINDIR%\sh_assoc_check.sh"      goto :ERROR_CORRUPT
 
@@ -72,8 +76,13 @@ call :GETFILE %var:~13%
 
 :: if the check fails, run the installer - it'll request elevation rights and install the patch.
 :: All the shortcuts above ensure this only happens if it's *actually going to change something*.
+
 IF "%gfresult%" == "git-bash.exe" (
-	"%BINDIR%\ShAssocFixGitForWindows.exe"
+	if %INTERACTIVE% == "true" (
+		"%BINDIR%\ShAssocFixGitForWindows.exe"
+	) else (
+	
+	)
 )
 
 exit /B 0
