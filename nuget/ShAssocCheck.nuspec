@@ -2,15 +2,15 @@
 <package >
   <metadata>
     <id>ShAssocCheck</id>
-    <version>0.0.2</version>
+    <version>0.2.0</version>
     <authors>Jake Stine</authors>
     <owners>Jake Stine</owners>
-    <projectUrl>https://github.com/jstine35/BashAssocFixGFW</projectUrl>
+    <projectUrl>https://github.com/jstine35/ShAssocCheck</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Verifies correct operation of .sh file association and automatically fixes known bug in Git for Windows .sh association, if detected.</description>
+    <description>Verifies correct operation of .sh file association and fixes known bug in Git for Windows .sh pipe redirection.</description>
     <releaseNotes>Initial package release.</releaseNotes>
     <copyright>Copyright 2018</copyright>
-    <tags>Git SH Bash Assoc Association</tags>
+    <tags>Git SH Bash Assoc Association CoreUtils</tags>
 
     <!--
 	<dependencies>
@@ -19,7 +19,8 @@
 	-->
   </metadata>
     
-  <!-- the NSIS installer must be built prior to creating the NuGet package. The batch
+  <!-- ShAssocFixGitForWindows.exe - 
+       the NSIS installer must be built prior to creating the NuGet package. The batch
 	   scripts are not baked into NuGet directly because there's no means by which we can
 	   run the script from MSBuild with elevated user privileges. But the NSIS script has
 	   elevation baked into it's .exe manifest, and so _it_ can extract the batch files and
@@ -27,10 +28,10 @@
   -->
   
   <files>
-    <file src="..\nsis\ShAssocFixGitForWindows.exe" target="bin" />
-    <file src="sh-assoc-check.cmd"                  target="bin" />
     <file src="ShAssocCheck.targets"                target="build" />
+    <file src="sh-assoc-check.cmd"                  target="bin" />
     <file src="..\sh_assoc_check.sh"                target="bin" />
+    <file src="$installer_exe$"                     target="bin" />
 
 <!-- Following files are what's included in the NSIS installer. -->
 <!-- 
