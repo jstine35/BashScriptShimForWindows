@@ -15,7 +15,7 @@ Available in multiple form factors:
     
 ## Getting and Using the NuGet Package
 
-[TODO - link to nuget published page]
+https://www.nuget.org/packages/ShAssocCheck/
 
 If you would like your Visual Studio projects to be robust against developers encountering mysterious build
 failures due to pipe redirection failures or missing `.sh` file associations, then add this NuGet dependency.
@@ -38,11 +38,16 @@ the _Admin Elevated Rights_ profile required to modify file types and associatio
 only once after any *Git for Windows* install/update (due to GitWin overwritting our association with it's
 broken one).
 
+-----------------------------------------
 ## Creating `.sh` Associations for MSYS2
+
+It's expected that if you have **MSYS2** installed, then it's a good chance you are a CLI enthusiast and
+don't mind a few manual steps to get things working nicely.
 
 #### Using MSYS Bash Shell
 You can create the correct association by running `./sh_auto_file_fix.sh` that comes with this repository.
-It has a feature that can forcibly create a new `.sh` association.  Example:
+It has a feature that can forcibly create a new `.sh` association, using the path to the shell that's
+currently running.  Example:
 
     $ sh_auto_file_fix.sh --force-assoc
 
