@@ -1,8 +1,8 @@
 # ShAssocCheck
 Performs checks for `.sh` file association and correct pipe redirection behavior and reports a coherent
-error message if the check fails.  Supports [**Git for Windows**](https://gitforwindows.org/) and
-[**MSYS2**](http://www.msys2.org/).  It will also detect a known problem with _Git for Windows_ and fix it
-_(requires user admin rights elevation)_.
+error message if the check fails.  Supports auto-hotfixing a bug in [**Git for Windows**](https://gitforwindows.org/)
+_(requires user admin rights elevation)_.  Hot-fixing [**MSYS2**](https://www.msys2.org) is not currently supported:
+developers using **MSYS2** will need to create the `.sh` file association manually.
 
 Available in multiple form factors:
   * ___(recommended)___ as an [installer for individual users](https://github.com/jstine35/ShAssocCheck/releases)
@@ -37,6 +37,26 @@ script proceeds to check `sh_auto_file` and see if it matches git-bash.exe.  If 
 the _Admin Elevated Rights_ profile required to modify file types and associations, and will be invoked
 only once after any *Git for Windows* install/update (due to GitWin overwritting our association with it's
 broken one).
+
+## Creating `.sh` Associations for MSYS2
+
+#### Using MSYS Bash Shell
+You can create the correct association by running `./sh_auto_file_fix.sh` that comes with this repository.
+It has a feature that can forcibly create a new `.sh` association.  Example:
+
+    $ sh_auto_file_fix.sh --force-assoc
+
+### Using a CMD Prompt _(no downloads required)_
+You can also manually create a file association for **MSYS2** without downloading anything from ShAssocCheck.
+Paste the following commands into an _admin-elevated_ command prompt, making sure to replacd `c:\msys64\` with
+the location of your MSYS2 install in the case that it's not installed into the default location.
+
+    c:\> ftype sh_auto_file="c:\msys64\usr\bin\bash.exe" --login "%L" %*
+    c:\> assoc .sh=sh_auto_file
+    
+For trivia sake: the same basic action is done to repair the broken association in **Git for Windows**,
+except the path is to the `bash.exe` that's installed in the **Git for Windows** directory, usually
+something akin to `c:\Program Files\Git\usr\bin\bash.exe`.
 
 ---------------------
 ## Addendum: Trivia!
