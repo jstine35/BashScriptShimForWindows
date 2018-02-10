@@ -26,9 +26,13 @@ set grep_cmd=FINDSTR
 :: 9009 is the code for "file not found", which gets set if sh_assoc_check.sh has no valid association 
 IF %ERRORLEVEL% == 9009 (
     >&2 echo ERROR: .sh file association check failed!
-    >&2 echo This installer requires Git for Windows.  If you do have Git for Windows installed then the
-    >&2 echo install appears to be corrupted.  Please re-install latest edition of Git for Windows
-    >&2 echo and try again.
+    >&2 echo This installer requires Git for Windows.  If you do have Git 
+    >&2 echo for Windows installed then the install appears to be corrupted.
+    >&2 echo Please re-install latest edition of Git for Windows and make sure
+    >&2 echo to select the full Unix Commandline integration via PATH option for
+    >&2 echo best results!
+    >&2 echo
+    >&2 echo Installer cancelled: No changes to the system have been made.
     exit /b 1
 )
 
@@ -36,13 +40,15 @@ ftype sh_auto_file>nul 2>&1 || (
     >&2 echo ERROR: CoreUtils/Bash pipe redirection test FAILED.
     >&2 echo ERROR: Git for Windows association 'sh_auto_file' not found!
     
-    >&2 echo This is an unrecognized version of CoreUtils/Bash.  Unforunately pipe
-    >&2 echo redirection is not working right but this installer is also not confident 
-    >&2 echo enough to apply changes since it doesn't recognize your software setup. 
-    >&2 echo Please visit the ShAssocFix website on GitHub for details on how you can
-    >&2 echo investigate your setup and fix things manually.
+    >&2 echo This installer doesn't recognize your CoreUtils setup and isn't
+    >&2 echo confident enough to apply changes to your system. Please visit the
+    >&2 echo ShAssocFix website on GitHub for details on how you can investigate
+    >&2 echo your setup and fix things manually.
     >&2 echo
-    >&2 No changes to the system will be made.
+    >&2 echo Alternatively, install Git for Windows and make sure to select the
+    >&2 echo full Unix Commandline integration via PATH option for best results.
+    >&2 echo
+    >&2 echo Installer cancelled: No changes to the system have been made.
     exit /b 1
 )
 

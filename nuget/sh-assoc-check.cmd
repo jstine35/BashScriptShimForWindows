@@ -13,9 +13,6 @@ set BINDIR=%~1
 set INTERACTIVE=%2
 IF "%BINDIR%" == ""  set BINDIR=.
 
-
-echo Interactive = %INTERACTIVE%
-
 IF NOT EXIST "%BINDIR%\sh_assoc_check.sh"      goto :ERROR_CORRUPT
 
 :: if the user has CoreUtils in their path then `find` is going to be the Unix one, which is
@@ -36,11 +33,12 @@ IF %ERRORLEVEL% == 9009 (
     >&2 echo ERROR: Bash/CoreUtils is required to build this software. 
     >&2 echo You can acquire CoreUtils by installing one of the following software packages:
     >&2 echo   * Git For Windows  [recommended]
-    >&2 echo   * MSYS2
+    >&2 echo   * MSYS2 (requires additional steps)
     >&2 echo 
-    >&2 echo Note that Cygwin is *not* supported: it does not provide .sh file associations
-    >&2 echo by default, and it lacks automatic windows/linux pathname conversion features of
-    >&2 echo of MSYS2.
+    >&2 echo Note that MSYS2 support is dodgy and will likely require expert knowledge of MSYS2
+    >&2 echo package management to get things working. The CoreUtils that come with Git for
+    >&2 echo Windows are much more feature-complete.  If you have MSYS2 installed and are getting
+    >&2 echo this message then you will need to create the .sh file association manually.
     exit /b 1
 )
 
@@ -49,17 +47,14 @@ IF %ERRORLEVEL% == 9009 (
 
 ftype sh_auto_file>nul 2>&1 || (
     >&2 echo ERROR: CoreUtils/Bash pipe redirection test FAILED.
-    >&2 echo ERROR: Unrecognized version of CoreUtils/Bash -- manual fix will be required.
-    >&2 echo 
-    >&2 echo You can acquire a supported version of CoreUtils by installing one of the following
-    >&2 echo software packages:
-    >&2 echo   * Git For Windows  [recommended]
-    >&2 echo   * MSYS2
-    >&2 echo 
-    >&2 echo Note that Cygwin is *not* supported: it does not provide .sh file associations by
-    >&2 echo default, and it lacks automatic windows/linux pathname conversion features of
-    >&2 echo MSYS2.
-    
+    >&2 echo ERROR: Unrecognized distribution of CoreUtils/Bash.
+    >&2 echo   This buildstep doesn't recognize your CoreUtils software setup is not confident
+    >&2 echo   enough to apply changes to try and fix it.  Please visit the ShAssocCheck website
+    >&2 echo   on GitHub for details on how you can fix things manually.
+    >&2 echo   
+    >&2 echo Alternatively, install Git for Windows and make sure to select the full Unix
+    >&2 echo Commandline integration via PATH option for best results.
+    CALL ERROR_SOFTWARE_REQUIRED
     exit /b 1
 )
 
