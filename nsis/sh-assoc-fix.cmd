@@ -1,5 +1,7 @@
 @echo off
 
+SETLOCAL
+
 :: First step: try running an sh script which simply returns success.  If it fails then there's no appropriate sh
 :: handler installed into the system.
 
