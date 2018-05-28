@@ -1,69 +1,62 @@
-# ShAssocCheck
-Performs checks for `.sh` file association and correct pipe redirection behavior and reports a coherent
-error message if the check fails.  Supports auto-hotfixing a bug in [**Git for Windows**](https://gitforwindows.org/)
-_(requires user admin rights elevation)_.  Hot-fixing [**MSYS2**](https://www.msys2.org) is not currently supported:
-developers using **MSYS2** will need to create the `.sh` file association manually.
+# BASH Script Execution Shim for Windows
 
-Available in multiple form factors:
-  * ___(recommended)___ as an [installer for individual users](https://github.com/jstine35/ShAssocCheck/releases)
-    looking to verify their CoreUtils is working as-it-should, or to fix their existing _Git for Windows_
-    install.
-  * as a NuGet package that can be attached to any project and throws helpful diagnostic messages if
-    CoreUtils checks fail.
-  * as stand-alone `.sh` scripts which must be run from an _admin-enabled_ `git-bash` shell -- for those
-    who love their CLI as much as I do
+This utility is meant for use with both [**Git for Windows**](https://gitforwindows.org/) and
+[**MSYS2**](https://sourceforge.net/projects/msys2/).  It allows `.sh` scripts to be run from the Windows
+Explorer directly via double-click.  It also allows `.sh` scripts to be run from the `cmd` prompt and from
+batch file scripts (`.bat` and `.cmd`).  It is available as an
+    [installer for individual users](https://github.com/jstine35/ShAssocCheck/releases).
+
+### What is a `shim` ?
+
+A `shim` is a small script or executable that forwards a set of parameters onto another command.  The
+command it forwards the parameters to depends on the current state of the running shell process.  In
+the case of this shim, it forwards commands onto `bash.exe` for either Git for Windows or for MSYS2,
+depending on the current state of the process.  It also ensures that the shell is spawned with `--login`
+when appropriate.
+
+### Benefits of installing this shim tool
+
+ * Fixes a problem in Git for Windows `sh_auto_file` that breaks pipe redirection.  The bug is explained
+   in detail later in this readme.
     
-## Getting and Using the NuGet Package
+ * Provides safe interoperability on systems that have both Git for Windows and MSYS2 installed.
+ 
+-----------------------------------------
+## Installation for MSYS2 Standalone
 
-https://www.nuget.org/packages/ShAssocCheck/
+It's expected that if you have **MSYS2** installed as a standalone tool, then it's a good chance you are
+a CLI enthusiast and don't mind a few manual steps to get things working nicely.
 
-If you would like your Visual Studio projects to be robust against developers encountering mysterious build
-failures due to pipe redirection failures or missing `.sh` file associations, then add this NuGet dependency.
-Keep in mind that this NuGet package normally doesn't _do_ anything, except verify that `.sh` scripts are in
-fact working.  If you have a controlled development envitonment where you can ensure everyone has Bash/CoreUtils
-properly installed, then there's really no need to use the `ShAssocCheck` NuGet Package.
+### Using the Installer
 
-If you have a solution with many projects then it is a good idea to attach `ShAssocCheck` NuGet package to a
-special startup project in your solution that runs before anything else.  Often times solutions will have such
-a project for the purpose of collecting git repository version information and this NuGet package is best
-added as a dependency there.  If the solution doesn't have such a project, then probably it probably _should_
-have one.
+If your MSYS2 is installed tot he default location at `c:\msys2` then all you should need to do is run
+the installer.  The default settings should work fine.  If your MSYS2 is installed to a different
+location then it becomes necessary to set an environment variable telling the shim where it can find
+your MSYS2 install.  This is necessary because MSYS2 itself privodes _no clues_ about where it's been
+installed to the Windows Registry or Environment.
 
-## NuGet Package: How it Works
-The script tests for operational `.sh` file associations by running a short `.sh` script and getting
-the result via pipe redirection.  If it works, then the script does nothing else.  If that check fails, the
-script proceeds to check `sh_auto_file` and see if it matches git-bash.exe.  If so, it applies the 
-***Git for Windows* assocation fix** via a NSIS installer.  The installer is used because it provides
-the _Admin Elevated Rights_ profile required to modify file types and associations, and will be invoked
-only once after any *Git for Windows* install/update (due to GitWin overwritting our association with it's
-broken one).
+The variable is `MSYS2_INSTALL_DIR` and can be set up like so:
+
+    MSYS2_INSTALL_DIR=d:\path\to\msys64
+    
+Make sure to restart Windows Explorer (login/logout or kill process) before running the Installer, to make
+sure the environment variable has taken effect.
+
+### Using a CMD Prompt _(no installer)_
+You can also manually create a file association for **MSYS2** without downloading the installer from this
+repository.  Download sh-auto-shim.cmd onto your PC. Paste the following commands into an _admin-elevated_
+command prompt, making sure to replace `c:\msys64` with the location of your MSYS2 install in the case
+that it's not installed into the default location.
+
+    c:\> ftype sh_auto_file="c:\path\to\sh-auto-shim.cmd" --msys2 "c:\msys64" "%L" %*
+    c:\> assoc .sh=sh_auto_file
+
+Alternatively you can set the MSYS2 dir via the `MSYS2_INSTALL_DIR` environment variable, in which case
+the assocation can be abbrivated like so:
+
+    c:\> ftype sh_auto_file="c:\path\to\sh-auto-shim.cmd" "%L" %*
 
 -----------------------------------------
-## Creating `.sh` Associations for MSYS2
-
-It's expected that if you have **MSYS2** installed, then it's a good chance you are a CLI enthusiast and
-don't mind a few manual steps to get things working nicely.
-
-#### Using MSYS Bash Shell
-You can create the correct association by running `./sh_auto_file_fix.sh` that comes with this repository.
-It has a feature that can forcibly create a new `.sh` association, using the path to the shell that's
-currently running.  Example:
-
-    $ sh_auto_file_fix.sh --force-assoc
-
-### Using a CMD Prompt _(no downloads required)_
-You can also manually create a file association for **MSYS2** without downloading anything from ShAssocCheck.
-Paste the following commands into an _admin-elevated_ command prompt, making sure to replacd `c:\msys64\` with
-the location of your MSYS2 install in the case that it's not installed into the default location.
-
-    c:\> ftype sh_auto_file="c:\msys64\usr\bin\bash.exe" --login "%L" %*
-    c:\> assoc .sh=sh_auto_file
-    
-For trivia sake: the same basic action is done to repair the broken association in **Git for Windows**,
-except the path is to the `bash.exe` that's installed in the **Git for Windows** directory, usually
-something akin to `c:\Program Files\Git\usr\bin\bash.exe`.
-
----------------------
 ## Addendum: Trivia!
 Probably this section's not helpful, unless you're academically curioous or your system is in some
 bad or broken state and you're trying to troubleshoot it.
@@ -90,8 +83,7 @@ Windows.  That is actually a problem.
 The drawback to this method is that scripts authored explicitly for Git for Windows -- and which expect
 the termincal console provided by Git for Windows terminal -- will start up in the default Windows Console
 Terminal instead.  Basically this just means missing out on a lot of eye candy: nice fonts, bigger window
-size, etc.  And I don't know anyone who uses interactive shells anyway.  `gitk`, `GitExtensions`, and 
-`TortoiseGit` are all _much_ better windows-native solutions to the interactive-UI problem.
+size, etc.  And you only miss out on that if you use interactive shell scripts in GIT.
 
 #### Optional Workaround
 If the association change does create a problem for specific interactive scripts, the ideal solution would 
