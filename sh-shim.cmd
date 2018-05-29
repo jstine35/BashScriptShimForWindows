@@ -4,8 +4,8 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 :: Optimization: SH_AUTO_SHIM_EXEC is set by the first time the sh_auto_file association is invoked.
 :: Any subsequent sub-shells will thus shortcut here.  User can also force behavior of the shim.
 if EXIST "%SH_AUTO_SHIM_EXEC%" (
-    set bash_path=%SH_AUTO_SHIM_EXEC%
-    goto :BASH_SUBSHELL_FOUND
+	set bash_path=%SH_AUTO_SHIM_EXEC%
+	goto :BASH_SUBSHELL_FOUND
 )
 
 set shell_exec_cmd=bash.exe
@@ -17,13 +17,13 @@ set shell_exec_cmd=bash.exe
 :: Workaround: Check for cygpath first, which serves as a good litmus for MSYS2 presence.
 where cygpath 2>NUL 1>NUL
 if %errorlevel% == 0 (
-    where bash 2>NUL 1>NUL
-    if %errorlevel% == 0 (
-        FOR /F "tokens=* USEBACKQ" %%F IN (`where bash`) DO (
-            SET bash_path=%%F\%shell_exec_cmd%
-        )
-        goto :BASH_SUBSHELL_FOUND
-    )
+	where bash 2>NUL 1>NUL
+	if %errorlevel% == 0 (
+		FOR /F "tokens=* USEBACKQ" %%F IN (`where bash`) DO (
+			SET bash_path=%%F\%shell_exec_cmd%
+		)
+		goto :BASH_SUBSHELL_FOUND
+	)
 )
 
 :: favor git-bash ahead of MSYS2 bash as it generally integrates better with Windows.
@@ -40,7 +40,7 @@ if %errorlevel% == 0 (
     if defined git_path (
         call :dirname result "!git_path!"
         set bash_path=!result!\..\bin\%shell_exec_cmd%
-        goto :GIT_PATH_FOUND
+		goto :GIT_PATH_FOUND
     )
 )
 
@@ -49,10 +49,10 @@ if %errorlevel% == 0 (
 :: 2. fallback on MSYS2 bash at the fixed location...
 set bash_path=%MSYS2_INSTALL_DIR%\usr\bin\%shell_exec_cmd%
 if NOT EXIST "%bash_path%" (
-    set bash_path=c:\msys64\usr\bin\%shell_exec_cmd%
-    if NOT EXIST "%bash_path%" (
-        goto :ERROR_BASH_NOT_FOUND
-    )
+	set bash_path=c:\msys64\usr\bin\%shell_exec_cmd%
+	if NOT EXIST "%bash_path%" (
+		goto :ERROR_BASH_NOT_FOUND
+	)
 )
 
 :: MSYS2 doesn't integrate with cmd shell the same way git-bash does by default.  It needs some
@@ -80,7 +80,9 @@ exit /b %errorlevel%
 
 :ERROR_BASH_NOT_FOUND
 >&2 echo error: GIT bash was not found in the PATH.
->&2 echo Please install GIT bash and ensure GIT is added to the PATH.
->&2 echo If you have a non-git installation of MSYS2 its location can be specified 
+>&2 echo Please install GIT for Windows and ensure its installer is instructed to add
+>&2 echo GIT to the PATH.
+>&2 echo -----------------------------
+>&2 echo If you have a standalone installation of MSYS2 its location can be specified 
 >&2 echo directly via: set MSYS2_INSTALL_DIR=c:\path\to\msys2
 exit /b 1
