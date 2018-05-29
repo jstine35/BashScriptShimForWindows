@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>ShAssocCheck</id>
+    <id>BashScriptShim</id>
     <version>0.3.0</version>
     <authors>Jake Stine</authors>
     <owners>Jake Stine</owners>
-    <projectUrl>https://github.com/jstine35/ShAssocCheck</projectUrl>
+    <projectUrl>https://github.com/jstine35/BashScriptShim</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Verifies correct operation of .sh file association and fixes known bug in Git for Windows .sh pipe redirection.</description>
-    <releaseNotes>Initial package release.</releaseNotes>
+    <releaseNotes>These release notes are probably out of date.</releaseNotes>
     <copyright>Copyright 2018</copyright>
-    <tags>Git SH Bash Assoc Association CoreUtils</tags>
+    <tags>Git SH Bash Assoc Association CoreUtils Shim Installer</tags>
 
     <!--
 	<dependencies>
@@ -19,7 +19,7 @@
 	-->
   </metadata>
     
-  <!-- ShAssocFixGitForWindows.exe - 
+  <!-- BashScriptShimInstaller.exe - 
        the NSIS installer must be built prior to creating the NuGet package. The batch
 	   scripts are not baked into NuGet directly because there's no means by which we can
 	   run the script from MSBuild with elevated user privileges. But the NSIS script has
@@ -28,15 +28,9 @@
   -->
   
   <files>
-    <file src="ShAssocCheck.targets"                target="build" />
+    <file src="BashScriptShimCheck.targets"         target="build" />
     <file src="sh-assoc-check.cmd"                  target="bin" />
-    <file src="..\sh_assoc_check.sh"                target="bin" />
-    <file src="..\nsis\ShAssocFixGitForWindows.exe" target="bin" />
-
-<!-- Following files are what's included in the NSIS installer. -->
-<!-- 
-    <file src="..\sh_auto_file_fix.sh"              target="bin" />
--->
-
+    <file src="..\test_script.sh"                   target="bin" />
+    <file src="..\nsis\BashScriptShimInstaller.exe" target="bin" />
   </files>
 </package>
